@@ -1,0 +1,50 @@
+# The dsh-canary bundle patch.
+#
+# `dsh plugin --profile <name> add …` installs this package into the profile,
+# sees the `dsh.bundle.patch` field in its package.json, and appends the
+# package to the profile manifest's ordered `dsh.profile.bundles` list. This
+# file is then composed as one layer over the bundles below it (dsh-base and
+# the mode bundle) and under the profile's own cordis.patch.yml.
+#
+# One insert, one row: the canary. A later layer — the profile's
+# cordis.patch.yml or a `--patch` overlay — addresses the row by its `id` to
+# fix the plant or point the incident log somewhere this deployment actually
+# collects. Note that an id-targeted patch replaces the row's whole `config`
+# rather than merging into it, so an override must restate every field it means
+# to keep.
+#
+# config:
+#   canary       an optional fixed canary to plant, of the form DSHCANARY_
+#                followed by 32 lowercase hex characters. Leave it unset in
+#                production: with the key absent a fresh canary is minted on
+#                every apply, so a plant lasts one plugin lifetime and an
+#                attacker never gets a second session to work on the same
+#                value. Set it only when the plant must be predictable — a test
+#                suite that has to assert on it, or a fleet of workers that
+#                must share one. A value that is not canary-shaped is rejected
+#                at apply time rather than quietly replaced by a random one.
+#                Default: generated.
+#                (Env fallback, used only if this key is absent: DSH_CANARY.)
+#
+#   incidentLog  path of the append-only JSONL incident log. Each line names a
+#                timestamp, the tool whose call was denied, and where the echo
+#                was found — `args` or `url`. It never holds the canary, or any
+#                part of it beyond the shared tag, so the log is a record that
+#                the tripwire fired and not a copy of the tripwire. Relative
+#                paths resolve against the process working directory, and the
+#                file is created 0600.
+#                Default: `.dsh-canary.jsonl`.
+#                (Env fallback, used only if this key is absent: DSH_CANARY_LOG.)
+#
+# The row below configures nothing on purpose: with both keys absent the canary
+# is freshly minted and the environment fallbacks still apply. A profile that
+# wants a fixed plant or a durable log says so in its own layer:
+#
+#   - id: canary
+#     config:
+#       incidentLog: /var/log/dsh/canary.jsonl
+
+- insert:
+    - id: canary
+      name: dsh-canary
+      config: {}

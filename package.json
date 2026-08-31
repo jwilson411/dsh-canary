@@ -1,0 +1,56 @@
+{
+  "name": "dsh-canary",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin: plants a canary string in model-visible context and denies any tool argument or outbound URL that echoes it back",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./canary": "./src/canary.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml",
+    "LICENSE",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwilson411/dsh-canary.git"
+  },
+  "homepage": "https://github.com/jwilson411/dsh-canary#readme",
+  "bugs": {
+    "url": "https://github.com/jwilson411/dsh-canary/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "plugin",
+    "canary",
+    "exfiltration",
+    "security"
+  ],
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": "^0.1.1-rc.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+  }
+}
